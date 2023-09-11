@@ -1,7 +1,7 @@
 #ifdef __ANDROID__
 // This prevents the shadowing of the pthread functions
 #define __PTHREAD_FIX_NO_SHADOW__
-#include "pthread_fix.h"
+#include "android_pthread_fix.h"
 #include <errno.h>
 #include <assert.h>
 

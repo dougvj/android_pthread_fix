@@ -1,26 +1,65 @@
 #ifdef __ANDROID__
-#ifndef __PTHREAD_FIX_H__
-#define __PTHREAD_FIX_H__
-// We have to include all libcalls that are cancellation points
-// so that we can wrap them with our own functions.
-#include <fcntl.h>
-#include <pthread.h>
+#ifdef __BIONIC_CAST
+#warning "android_pthread_fix.h should be included before any other headers to garantee cancellation semantics by any library calls used in headers"
+#endif
+#ifndef __ANDROID_PTHREAD_FIX_H__
+#define __ANDROID_PTHREAD_FIX_H__
+
 #include <stdatomic.h>
+
+// Theses are the includes for the cancellation points. We have to include
+// them first so that we can wrap them with our own functions without affecting
+// their prototypes.
+
+// aio_supend, not actually available on android
+// #include <aio.h>
+// pthread_cond_timedwait pthread_cond_wait pthread_join
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+// poll
+#include <poll.h>
 #include <sys/epoll.h>
+// msync
 #include <sys/mman.h>
+// select, pselect
 #include <sys/select.h>
+// accept
+// connect
+// recv recvfrom recvmsg
+// send sendmsg sendto
 #include <sys/socket.h>
 #include <sys/stat.h>
+// creat
+// openat
+// open
+#include <fcntl.h>
 #include <sys/time.h>
 #include <sys/types.h>
+// readv, writev
 #include <sys/uio.h>
-#include <sys/un.h>
+// wait waitpid
 #include <sys/wait.h>
+// tcdrain
 #include <termios.h>
+// clock_nanosleep
+// nanosleep sleep usleep
 #include <time.h>
+// close
+// fdatasync
+// fsync
+// lockf
+// pause
+// pread
 #include <unistd.h>
+// getmsg, getpmsg, msgrcv, msgsnd (not on android)
+// #include <stropts.h>
+// mq_receive, mq_send, mq_timedreceive, mq_timedsend (not on android)
+// #include <mqueue.h>
+// sem_timedwait sem_wait
+#include <semaphore.h>
+// sigpause sigsuspend sigwait sigwaitinfo sigtimedwait
+#include <signal.h>
 
 // For debugging
 #define pthread_fix_log(...) fprintf(stderr, "pthread_fix: " __VA_ARGS__);
@@ -161,5 +200,5 @@ int pthread_cancel(pthread_t thread);
 int pthread_setcancelstate(int state, int *oldstate);
 int pthread_setcanceltype(int type, int *oldtype);
 void pthread_testcancel(void);
-#endif // __PTHREAD_FIX_H__
+#endif // __ANDROID_PTHREAD_FIX_H__
 #endif // __ANDROID__

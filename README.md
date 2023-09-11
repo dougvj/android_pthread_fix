@@ -2,8 +2,8 @@
 
 Missing pthread functionality on android with bionic, namely cancellation semantics.
 
-Include the `pthread_fix.c` and `pthread_fix.h` in your project. This provides
-the following function calls:
+Include the `android_pthread_fix.c` and `android_pthread_fix.h` in your project.
+This provides the following function calls:
 
 - `pthread_getname_np` (Exists in bionic but prototype missing)
 - `pthread_cancel`
@@ -14,12 +14,14 @@ the following function calls:
 ## Limitations
 
 - Requires managing a separate table of thread information, which right now is
-  hardcoded to size 512
+  hardcoded to size 512. This can be changed in the source file
 
 - Co-opts the use of SIGUSR1
 
 - Cancellation points are implemented with Macros, which means that if you have
-  something like a function pointer struct field named `send` it will break
+  something like a function pointer struct field named `send` it will break.
+  In addition, you need to be extra careful of include order if headers utilize
+  cacellation point library functions.
 
 ## Acknowledgements
 
